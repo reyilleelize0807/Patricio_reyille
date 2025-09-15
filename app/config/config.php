@@ -79,7 +79,13 @@ $config['ENVIRONMENT']             = 'development';
 | WARNING: You MUST set this value!
 |
 */
-$config['base_url'] 				= 'https://patricio-reyille.onrender.com/';
+// Dynamically determine base_url to work in local and production environments
+// Example result: http://localhost/crud/Patricio_reyille/
+// or https://patricio-reyille.onrender.com/
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+$config['base_url'] 				= $scheme . '://' . $host . ($scriptDir === '' ? '/' : $scriptDir . '/');
 
 /*
 |--------------------------------------------------------------------------
