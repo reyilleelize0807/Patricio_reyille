@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <div class="container min-h-screen bg-gray-50 py-10">
-            <div class="max-w-xl mx-auto bg-white shadow rounded-lg p-6">
+    <div class="container min-h-screen bg-gray-50 py-10 flex items-center">
+            <div class="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-8">
                 <h1 class="text-2xl font-semibold text-gray-800 mb-6">Create Record</h1>
                 <form action="<?=site_url('/');?>" method="post" class="space-y-4">
                     <div>
