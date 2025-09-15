@@ -10,7 +10,7 @@
     <div class="container">
 
             <h1>Create Record</h1>
-            <form action="<?=site_url('user/create');?>" method="post">
+            <form action="<?=site_url('/');?>" method="post">
                 <label for="last_name">Last Name:</label>
                 <input type="text" id="last_name" name="last_name" size="6">
 
