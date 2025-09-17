@@ -82,7 +82,7 @@ $config['ENVIRONMENT']             = 'development';
 // Dynamically determine base_url to work in local and production environments
 // Example result: http://localhost/crud/Patricio_reyille/
 // or https://patricio-reyille.onrender.com/
-$config['base_url'] 				= 'https://patricio-reyille.onrender.com';
+$config['base_url'] 				= 'https://patricio-reyille.onrender.com/';
 /*
 |--------------------------------------------------------------------------
 | Index File
