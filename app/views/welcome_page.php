@@ -7,6 +7,15 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
     <meta charset="UTF-8">
     <title>Welcome to LavaLust</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <script>
+        tailwind = { config: { darkMode: 'class' } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            try { if (localStorage.getItem('prefersDark') === '1') document.documentElement.classList.add('dark'); } catch (e) {}
+        });
+    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -111,7 +120,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 dark:bg-slate-900">
     <div class="container">
         <div class="header">
             <h1>🔥 LavaLust Framework</h1>

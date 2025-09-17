@@ -4,21 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Showdata</title>
+    <script>
+        // Enable class-based dark mode for Tailwind (must be before CDN script)
+        tailwind = { config: { darkMode: 'class' } };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Simple state toggles
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
+        // Utilities
+        function setChecked(id, isChecked) {
+            var input = document.getElementById(id);
+            if (input) input.checked = !!isChecked;
         }
-        function toggleCompact() {
-            const tableWrapper = document.getElementById('table-wrapper');
-            tableWrapper.classList.toggle('compact-mode');
+
+        function applyDarkMode(enabled) {
+            var root = document.documentElement;
+            if (enabled) { root.classList.add('dark'); } else { root.classList.remove('dark'); }
+            try { localStorage.setItem('prefersDark', enabled ? '1' : '0'); } catch (e) {}
         }
-        function toggleEmail() {
+
+        function applyCompact(enabled) {
+            var wrapper = document.getElementById('table-wrapper');
+            if (!wrapper) return;
+            if (enabled) { wrapper.classList.add('compact-mode'); } else { wrapper.classList.remove('compact-mode'); }
+            try { localStorage.setItem('prefersCompact', enabled ? '1' : '0'); } catch (e) {}
+        }
+
+        function applyEmailVisible(visible) {
             document.querySelectorAll('.col-email').forEach(function(el){
-                el.classList.toggle('hidden');
+                if (visible) { el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
             });
+            try { localStorage.setItem('showEmail', visible ? '1' : '0'); } catch (e) {}
         }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            // Initialize from localStorage
+            var prefersDark = (localStorage.getItem('prefersDark') === '1');
+            var prefersCompact = (localStorage.getItem('prefersCompact') === '1');
+            var showEmail = localStorage.getItem('showEmail');
+            var emailVisible = showEmail === null ? true : showEmail === '1';
+
+            applyDarkMode(prefersDark);
+            applyCompact(prefersCompact);
+            applyEmailVisible(emailVisible);
+
+            setChecked('toggle-dark', prefersDark);
+            setChecked('toggle-compact', prefersCompact);
+            setChecked('toggle-email', emailVisible);
+
+            // Wire events
+            var darkInput = document.getElementById('toggle-dark');
+            var compactInput = document.getElementById('toggle-compact');
+            var emailInput = document.getElementById('toggle-email');
+
+            if (darkInput) darkInput.addEventListener('change', function(){ applyDarkMode(darkInput.checked); });
+            if (compactInput) compactInput.addEventListener('change', function(){ applyCompact(compactInput.checked); });
+            if (emailInput) emailInput.addEventListener('change', function(){ applyEmailVisible(emailInput.checked); });
+        });
     </script>
     <style>
         /* Compact density without Tailwind config */
@@ -35,24 +76,27 @@
             </div>
 
             <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button type="button" onclick="toggleDarkMode()" class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow hover:bg-gray-50 dark:hover:bg-slate-700">
+                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
                     <span>Dark Mode</span>
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 dark:bg-slate-600">
-                        <span class="h-4 w-4 translate-x-1 rounded-full bg-white shadow transition dark:translate-x-5"></span>
+                    <input id="toggle-dark" type="checkbox" class="sr-only peer" />
+                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
+                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
                     </span>
-                </button>
-                <button type="button" onclick="toggleCompact()" class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow hover:bg-gray-50 dark:hover:bg-slate-700">
+                </label>
+                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
                     <span>Compact Density</span>
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200">
-                        <span class="h-4 w-4 translate-x-1 rounded-full bg-white shadow transition"></span>
+                    <input id="toggle-compact" type="checkbox" class="sr-only peer" />
+                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
+                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
                     </span>
-                </button>
-                <button type="button" onclick="toggleEmail()" class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow hover:bg-gray-50 dark:hover:bg-slate-700">
+                </label>
+                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
                     <span>Show/Hide Email</span>
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200">
-                        <span class="h-4 w-4 translate-x-1 rounded-full bg-white shadow transition"></span>
+                    <input id="toggle-email" type="checkbox" class="sr-only peer" />
+                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
+                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
                     </span>
-                </button>
+                </label>
             </div>
 
             <div id="table-wrapper" class="overflow-x-auto bg-white dark:bg-slate-800 shadow rounded-lg">
