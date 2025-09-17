@@ -21,7 +21,17 @@ class UserController extends Controller {
 
     public function show()
     {
-        $data ['students'] = $this->UserModel->all();
+        $q = $this->io->get('q');
+        $page = (int)$this->io->get('page');
+        if ($page < 1) { $page = 1; }
+        $perPage = (int)$this->io->get('per_page');
+        if ($perPage <= 0) { $perPage = 5; }
+
+        $result = $this->UserModel->search_paginate($q, $perPage, $page);
+        $data['students'] = $result['data'];
+        $data['pagination'] = $result;
+        $data['q'] = $q;
+        $data['per_page'] = $perPage;
         $this->call->view('Showdata', $data);
     }
 

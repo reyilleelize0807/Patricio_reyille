@@ -99,6 +99,23 @@
                 </label>
             </div>
 
+            <form action="<?=site_url('user/show');?>" method="get" class="mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                    <input type="text" name="q" value="<?=html_escape($q ?? '');?>" placeholder="Search by ID, Lastname, Firstname, or Email" class="sm:col-span-7 col-span-1 rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 px-3 py-2 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div class="sm:col-span-3 col-span-1">
+                        <label for="per_page" class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-1">Rows per page</label>
+                        <select id="per_page" name="per_page" class="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 px-3 py-2 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <?php $pp = (int)($per_page ?? 5); foreach([5,10,15,20] as $opt): ?>
+                                <option value="<?=$opt;?>" <?= $pp === $opt ? 'selected' : '' ?>><?=$opt;?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2 col-span-1 flex sm:justify-end">
+                        <button type="submit" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Search</button>
+                    </div>
+                </div>
+            </form>
+
             <div id="table-wrapper" class="overflow-x-auto bg-white dark:bg-slate-800 shadow rounded-lg">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                     <thead class="bg-gray-50 dark:bg-slate-700">
@@ -111,6 +128,11 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                        <?php if(empty($students)): ?>
+                        <tr>
+                            <td colspan="5" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-slate-300">No results found.</td>
+                        </tr>
+                        <?php endif; ?>
                         <?php foreach(html_escape($students) as $student): ?>
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
                             <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-100"><?=$student['id'];?></td>
@@ -128,6 +150,36 @@
                     </tbody>
                 </table>
             </div>
+
+            <?php if(isset($pagination) && ($pagination['last_page'] ?? 1) > 1): ?>
+            <?php
+                $current = (int)($pagination['current_page'] ?? 1);
+                $last = (int)$pagination['last_page'];
+                $qVal = isset($q) ? $q : '';
+                $pp = (int)($per_page ?? 5);
+                $base = site_url('user/show');
+            ?>
+            <nav class="mt-4 flex items-center justify-between" aria-label="Pagination">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-slate-300">Showing page <strong><?=$current;?></strong> of <strong><?=$last;?></strong> (<?=$pagination['total'];?> total)</p>
+                </div>
+                <ul class="inline-flex -space-x-px rounded-md shadow-sm">
+                    <?php $prev = max(1, $current - 1); ?>
+                    <li>
+                        <a href="<?=$base.'?q='.urlencode($qVal).'&per_page='.$pp.'&page='.$prev; ?>" class="px-3 py-2 text-sm border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 rounded-l-md hover:bg-gray-50">Prev</a>
+                    </li>
+                    <?php for($i = 1; $i <= $last; $i++): ?>
+                    <li>
+                        <a href="<?=$base.'?q='.urlencode($qVal).'&per_page='.$pp.'&page='.$i; ?>" class="px-3 py-2 text-sm border border-gray-300 dark:border-slate-700 <?=( $i === $current ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 hover:bg-gray-50')?>"><?=$i;?></a>
+                    </li>
+                    <?php endfor; ?>
+                    <?php $next = min($last, $current + 1); ?>
+                    <li>
+                        <a href="<?=$base.'?q='.urlencode($qVal).'&per_page='.$pp.'&page='.$next; ?>" class="px-3 py-2 text-sm border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 rounded-r-md hover:bg-gray-50">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <?php endif; ?>
         </div>
     </div>
 </body>
