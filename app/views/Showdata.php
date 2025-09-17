@@ -31,7 +31,7 @@
         <div class="max-w-6xl mx-auto">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-semibold text-gray-800 dark:text-slate-100">Student List</h1>
-                <a class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900" href="<?=site_url('user/create');?>">Add New Student</a>
+                <a class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900" href="<?=site_url('/');?>">Add New Student</a>
             </div>
 
             <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
