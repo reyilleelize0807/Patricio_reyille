@@ -75,17 +75,6 @@
                 <a class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900" href="<?=site_url('/');?>">Add New Student</a>
             </div>
 
-            <div class="mb-4 bg-white dark:bg-slate-800 rounded-lg shadow p-4">
-                <form action="<?=site_url('user/show');?>" method="get" class="flex flex-col sm:flex-row gap-3 sm:items-center">
-                    <label class="text-sm font-medium text-gray-700 dark:text-slate-200">Search</label>
-                    <input type="text" name="q" value="<?=isset($q)?html_escape($q):'';?>" placeholder="Search by ID, last name, first name, or email" class="flex-1 rounded-md border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2">
-                    <div class="flex gap-2">
-                        <button class="inline-flex items-center rounded-md bg-slate-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500">Search</button>
-                        <a href="<?=site_url('user/show');?>" class="inline-flex items-center rounded-md bg-gray-200 dark:bg-slate-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-100 shadow hover:bg-gray-300 dark:hover:bg-slate-500">Clear</a>
-                    </div>
-                </form>
-            </div>
-
             <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
                     <span>Dark Mode</span>
@@ -140,36 +129,6 @@
         </table>
             </div>
 
-            <?php if(isset($last_page) && $last_page > 1): ?>
-            <?php 
-                $qparam = isset($q) && $q!=='' ? '&q='.urlencode($q) : ''; 
-                $current = (int)$current_page; 
-                $last = (int)$last_page; 
-                $start = max(1, $current - 2); 
-                $end = min($last, $current + 2);
-            ?>
-            <div class="mt-4 flex items-center justify-between text-sm text-gray-700 dark:text-slate-200">
-                <div>Page <?=html_escape($current);?> of <?=html_escape($last);?></div>
-                <nav class="flex items-center" aria-label="Pagination">
-                    <a href="<?= $current>1 ? site_url('user/show?page='.($current-1).$qparam) : 'javascript:void(0)'; ?>" class="mr-2 inline-flex items-center rounded-md px-3 py-1.5 border border-gray-300 dark:border-slate-700 <?= $current>1 ? 'hover:bg-gray-50 dark:hover:bg-slate-700' : 'opacity-50 cursor-not-allowed'; ?>">Prev</a>
-                    <div class="inline-flex gap-1">
-                        <?php if($start > 1): ?>
-                            <a href="<?=site_url('user/show?page=1'.$qparam);?>" class="px-3 py-1.5 rounded-md border border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700">1</a>
-                            <?php if($start > 2): ?><span class="px-2">…</span><?php endif; ?>
-                        <?php endif; ?>
-                        <?php for($i=$start; $i<=$end; $i++): ?>
-                            <?php $active = $i === $current; ?>
-                            <a href="<?=site_url('user/show?page='.$i.$qparam);?>" class="px-3 py-1.5 rounded-md border <?= $active ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'; ?>"><?=$i;?></a>
-                        <?php endfor; ?>
-                        <?php if($end < $last): ?>
-                            <?php if($end < $last-1): ?><span class="px-2">…</span><?php endif; ?>
-                            <a href="<?=site_url('user/show?page='.$last.$qparam);?>" class="px-3 py-1.5 rounded-md border border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"><?=$last;?></a>
-                        <?php endif; ?>
-                    </div>
-                    <a href="<?= $current<$last ? site_url('user/show?page='.($current+1).$qparam) : 'javascript:void(0)'; ?>" class="ml-2 inline-flex items-center rounded-md px-3 py-1.5 border border-gray-300 dark:border-slate-700 <?= $current<$last ? 'hover:bg-gray-50 dark:hover:bg-slate-700' : 'opacity-50 cursor-not-allowed'; ?>">Next</a>
-                </nav>
-            </div>
-            <?php endif; ?>
         </div>
     </div>
 </body>
