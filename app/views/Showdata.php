@@ -1,135 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Showdata</title>
-    <script>
-        // Enable class-based dark mode for Tailwind (must be before CDN script)
-        tailwind = { config: { darkMode: 'class' } };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        // Utilities
-        function setChecked(id, isChecked) {
-            var input = document.getElementById(id);
-            if (input) input.checked = !!isChecked;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student List</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
 
-        function applyDarkMode(enabled) {
-            var root = document.documentElement;
-            if (enabled) { root.classList.add('dark'); } else { root.classList.remove('dark'); }
-            try { localStorage.setItem('prefersDark', enabled ? '1' : '0'); } catch (e) {}
-        }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 25px 30px;
+    }
 
-        function applyCompact(enabled) {
-            var wrapper = document.getElementById('table-wrapper');
-            if (!wrapper) return;
-            if (enabled) { wrapper.classList.add('compact-mode'); } else { wrapper.classList.remove('compact-mode'); }
-            try { localStorage.setItem('prefersCompact', enabled ? '1' : '0'); } catch (e) {}
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
 
-        function applyEmailVisible(visible) {
-            document.querySelectorAll('.col-email').forEach(function(el){
-                if (visible) { el.classList.remove('hidden'); } else { el.classList.add('hidden'); }
-            });
-            try { localStorage.setItem('showEmail', visible ? '1' : '0'); } catch (e) {}
-        }
+    .header h1 {
+      font-size: 22px;
+      margin: 0;
+      color: #2c3e50;
+    }
 
-        document.addEventListener('DOMContentLoaded', function(){
-            // Initialize from localStorage
-            var prefersDark = (localStorage.getItem('prefersDark') === '1');
-            var prefersCompact = (localStorage.getItem('prefersCompact') === '1');
-            var showEmail = localStorage.getItem('showEmail');
-            var emailVisible = showEmail === null ? true : showEmail === '1';
+    .btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
 
-            applyDarkMode(prefersDark);
-            applyCompact(prefersCompact);
-            applyEmailVisible(emailVisible);
+    .btn-add {
+      background: #3b82f6;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+    }
 
-            setChecked('toggle-dark', prefersDark);
-            setChecked('toggle-compact', prefersCompact);
-            setChecked('toggle-email', emailVisible);
+    .btn-add:hover {
+      background: #2563eb;
+    }
 
-            // Wire events
-            var darkInput = document.getElementById('toggle-dark');
-            var compactInput = document.getElementById('toggle-compact');
-            var emailInput = document.getElementById('toggle-email');
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-            if (darkInput) darkInput.addEventListener('change', function(){ applyDarkMode(darkInput.checked); });
-            if (compactInput) compactInput.addEventListener('change', function(){ applyCompact(compactInput.checked); });
-            if (emailInput) emailInput.addEventListener('change', function(){ applyEmailVisible(emailInput.checked); });
-        });
-    </script>
-    <style>
-        /* Compact density without Tailwind config */
-        .compact-mode table thead th { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .compact-mode table tbody td { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-    </style>
+    thead {
+      background: #f1f5f9;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: #555;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #eee;
+      transition: background 0.3s;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    td.actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-edit {
+      background: #facc15;
+      color: #333;
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    .btn-edit:hover { background: #eab308; }
+
+    .btn-delete {
+      background: #ef4444;
+      color: #fff;
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+    }
+
+    .btn-delete:hover { background: #dc2626; }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      td.actions {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900">
-    <div class="container min-h-screen py-10">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800 dark:text-slate-100">Student List</h1>
-                <a class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900" href="<?=site_url('/');?>">Add New Student</a>
-            </div>
-
-            <div class="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
-                    <span>Dark Mode</span>
-                    <input id="toggle-dark" type="checkbox" class="sr-only peer" />
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
-                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
-                    </span>
-                </label>
-                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
-                    <span>Compact Density</span>
-                    <input id="toggle-compact" type="checkbox" class="sr-only peer" />
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
-                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
-                    </span>
-                </label>
-                <label class="w-full inline-flex items-center justify-between rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow select-none">
-                    <span>Show/Hide Email</span>
-                    <input id="toggle-email" type="checkbox" class="sr-only peer" />
-                    <span class="ml-3 inline-flex h-5 w-10 items-center rounded-full bg-gray-200 peer-checked:bg-indigo-600 transition-colors">
-                        <span class="h-4 w-4 translate-x-1 peer-checked:translate-x-5 rounded-full bg-white shadow transition-transform"></span>
-                    </span>
-                </label>
-            </div>
-
-            <div id="table-wrapper" class="overflow-x-auto bg-white dark:bg-slate-800 shadow rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-                    <thead class="bg-gray-50 dark:bg-slate-700">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-200 uppercase tracking-wider">ID</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-200 uppercase tracking-wider">Lastname</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-200 uppercase tracking-wider">Firstname</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-200 uppercase tracking-wider col-email">Email</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-200 uppercase tracking-wider">Action</th>
-                </tr>
-            </thead>
-                    <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
-                <?php foreach(html_escape($students) as $student): ?>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                            <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-100"><?=$student['id'];?></td>
-                            <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-100"><?=$student['last_name'];?></td>
-                            <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-100"><?=$student['first_name'];?></td>
-                            <td class="px-4 py-3 text-sm text-gray-700 dark:text-slate-100 col-email"><?=$student['email'];?></td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex gap-2">
-                                    <a class="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" href="<?=site_url('user/update/'.$student['id']);?>">Update</a>
-                                    <a class="inline-flex items-center rounded-md bg-rose-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500" href="<?=site_url('user/soft-delete/'.$student['id']);?>">Delete</a>
-                                </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-            </div>
-
-        </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Student List</h1>
+      <a href="<?=site_url('/');?>" class="btn btn-add">+ Add New Student</a>
     </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Lastname</th>
+          <th>Firstname</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach(html_escape($students) as $student): ?>
+        <tr>
+          <td><?=$student['id'];?></td>
+          <td><?=$student['last_name'];?></td>
+          <td><?=$student['first_name'];?></td>
+          <td><?=$student['email'];?></td>
+          <td class="actions">
+            <a href="<?=site_url('user/update/'.$student['id']);?>" class="btn-edit">Update</a>
+            <a href="<?=site_url('user/soft-delete/'.$student['id']);?>" class="btn-delete">Delete</a>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
